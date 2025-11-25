@@ -5,7 +5,7 @@
 
 ## Задание
 ### Источник данных
-В качестве источника использовать демо-ответ на GET-запрос http://jsonplaceholder.typicode.com/posts<br>
+В качестве источника использовать демо-ответ на GET-запрос http://jsonplaceholder.typicode.com/posts <br>
 Сохранить полученные данные в локальной переменной<br>
 Обогатить данные расчетным полем **count** подсчитывающим количество постов в группировке по **userId**
 
@@ -58,5 +58,5 @@
 * NgRx
 
 ### Документация Angular
-https://angular.io/docs<br>
-https://angular-doc.ru/docs<br>
+https://angular.io/docs <br>
+https://angular-doc.ru/docs <br>
