@@ -1,3 +1,9 @@
+### v 0.0.3
+1. Add material lib
+2. Add modals-service
+3. Add blank pages: home-page, login-modal
+---
+
 ### v 0.0.2
 1. Fix test_angular.md
 2. Remove blank code
