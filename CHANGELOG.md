@@ -1,4 +1,10 @@
-### v 0.0.3
+### v 0.0.3 (+1h, +2h)
+1. Add login feature
+2. Add styles
+3. Add store
+---
+
+### v 0.0.3 (+2h)
 1. Add material lib
 2. Add modals-service
 3. Add blank pages: home-page, login-modal

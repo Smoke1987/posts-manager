@@ -1,1 +1,18 @@
-<p>login-form works!</p>
+<div class="login-content">
+  <div *ngIf="loginForm" [formGroup]="loginForm" class="login-form-wrapper">
+    <mat-form-field>
+      <mat-label>{{ 'Логин' }}</mat-label>
+      <input matInput formControlName="login">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>{{ 'Пароль' }}</mat-label>
+      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'">
+        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="onSubmit()">Войти</button>
+  </div>
+</div>
