@@ -12,6 +12,10 @@ export const authGuard: CanActivateFn = async (route: ActivatedRouteSnapshot, st
 
   let isLogged = authService?.isAuthenticated;
 
+  if (isLogged === undefined) {
+    isLogged = authService.checkUserLogged();
+  }
+
   if (!isLogged) {
     const modalsService = inject(AppModalsService);
 

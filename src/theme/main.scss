@@ -4,4 +4,8 @@
   --modal-width: 250px;
   --modal-height: auto;
   --default-padding: 16px;
+
+  .app-modal {
+    @include mixins.app-modal;
+  }
 }

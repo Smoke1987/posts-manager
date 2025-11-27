@@ -1,13 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule, MatLabel } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 
 import { LoginForm } from '../../models/common.model';
 import { AuthService } from '../../services/auth/auth.service';
+import { AlertsService } from '../../services/alerts/alerts.service';
+import { AppModalsService } from '../../services/modals/app-modals.service';
+import { AppModalData } from '../../services/modals/app-modals.model';
 
 @Component({
   selector: 'app-login-form',
@@ -19,12 +23,13 @@ import { AuthService } from '../../services/auth/auth.service';
     MatButtonModule,
     MatIconModule,
     MatLabel,
+    MatDialogModule,
     NgIf
   ],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.scss'],
 })
-export class LoginFormComponent implements OnInit {
+export class LoginFormComponent {
   loginForm: FormGroup<LoginForm>;
   hidePassword = true;
 
@@ -33,6 +38,9 @@ export class LoginFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private alertsService: AlertsService,
+    private modalsService: AppModalsService,
+    @Inject(MAT_DIALOG_DATA) public data: AppModalData,
   ) {
     this.loginForm = new FormGroup<LoginForm>({
       login: this.fb.nonNullable.control({ value: '', disabled: false }, Validators.required),
@@ -40,12 +48,7 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    console.log('LoginFormComponent @ ngOnInit():: ', { _this: this });
-  }
-
   async onSubmit(): Promise<void> {
-    console.log('LoginFormComponent @ onSubmit():: 1', { _this: this });
     if (this.loginForm.invalid) {
       return;
     }
@@ -55,6 +58,12 @@ export class LoginFormComponent implements OnInit {
     }
 
     const authResult = await this.authService.authenticate({ ...this.loginForm.value });
-    console.log('LoginFormComponent @ onSubmit():: 2', { authResult, _this: this });
+    if (!authResult?.success) {
+      this.alertsService.showErrorAlert(authResult?.error?.errorText);
+      return;
+    }
+
+    // Success auth
+    this.modalsService.closeModal<boolean>(this.data.modalId || '', true);
   }
 }

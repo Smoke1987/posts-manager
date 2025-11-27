@@ -1,0 +1,9 @@
+@mixin app-modal() {
+  cdk-dialog-container {
+    background-color: white;
+    padding: var(--default-padding);
+    border-radius: 16px;
+  }
+
+  @content;
+}

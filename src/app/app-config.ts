@@ -13,3 +13,8 @@ export const APP_CONFIG = new InjectionToken<AppConfig>('app.config', {
     ],
   })
 });
+
+export const SESSION_STORAGE = new InjectionToken<Storage>('Session storage', {
+  providedIn: 'root',
+  factory: () => window.sessionStorage
+});
