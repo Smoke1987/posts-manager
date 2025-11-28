@@ -38,6 +38,12 @@ $posts-manager-theme: mat.define-light-theme((
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  --primary-color: #{mat.get-color-from-palette($posts-manager-primary, default)};
+  --primary-50: #{mat.get-color-from-palette($posts-manager-primary, 50)};
+  --primary-100: #{mat.get-color-from-palette($posts-manager-primary, 100)};
+}
 
 @import "theme/main";

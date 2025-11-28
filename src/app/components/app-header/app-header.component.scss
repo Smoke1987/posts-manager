@@ -1,0 +1,52 @@
+:host {
+  --avatar-size: 28px;
+  --login-font-size: 22px;
+  --header-default-height: 64px;
+
+  --back-btn-icon-size: var(--back-btn-size, 32px);
+  --back-btn-padding: 12px;
+  --header-height: calc(var(--back-btn-padding) * 2 + var(--back-btn-icon-size) + 16px);
+
+  --mat-toolbar-standard-height: var(--header-height);
+
+  .header {
+    &-title {
+
+    }
+    &-spacer {
+      flex: 1 1 auto;
+    }
+
+    .back-button {
+      padding: var(--back-btn-padding);
+      width: calc(var(--back-btn-padding) * 2 + var(--back-btn-icon-size));
+      height: calc(var(--back-btn-padding) * 2 + var(--back-btn-icon-size));
+
+      mat-icon {
+        width: var(--back-btn-icon-size);
+        height: var(--back-btn-icon-size);
+        font-size: var(--back-btn-icon-size);
+      }
+    }
+
+    .logout-button {
+      .button-content {
+        display: flex;
+        align-items: center;
+
+        .user-name {
+          font-size: var(--login-font-size);
+          letter-spacing: normal;
+          text-transform: capitalize;
+        }
+
+        mat-icon {
+          width: var(--avatar-size);
+          height: var(--avatar-size);
+          font-size: var(--avatar-size);
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+}

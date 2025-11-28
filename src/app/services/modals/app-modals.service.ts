@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Dialog, DialogConfig, DialogRef } from '@angular/cdk/dialog';
 import { ComponentType } from '@angular/cdk/overlay';
 
-import { map, Observable } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
 
-import { AppModalConfig, AppModalData } from './app-modals.model';
+import { AppConfirmModalData, AppModalConfig, AppModalData } from './app-modals.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ConfirmModalComponent } from '../../modals/confirm-modal/confirm-modal.component';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,15 @@ export class AppModalsService {
   constructor(
     private dialog: Dialog,
   ) {
+  }
+
+  async showConfirmModal(data: AppConfirmModalData = {}): Promise<boolean> {
+    const { ConfirmModalComponent } = await import('../../modals/confirm-modal/confirm-modal.component');
+    const confirmed = await firstValueFrom(
+      this.openModal<boolean, AppConfirmModalData>(ConfirmModalComponent, data, {})
+    );
+
+    return !!confirmed;
   }
 
   openModal<

@@ -1,4 +1,4 @@
-### v 0.0.3 (+1h, +2h, +1h, +3h)
+### v 0.0.3 (+1h, +2h, +1h, +3h, +7h)
 1. Add login feature
 2. Add styles
 3. Add store features

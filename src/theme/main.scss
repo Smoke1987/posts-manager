@@ -8,4 +8,8 @@
   .app-modal {
     @include mixins.app-modal;
   }
+
+  .hidden {
+    display: none !important;
+  }
 }

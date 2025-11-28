@@ -19,12 +19,6 @@ export const selectVisiblePosts = createSelector(
         }
 
         return post.id % 2 === 0;
-      }).map((post) => {
-        if (loggedUser.role === 'user') {
-          const { title } = post;
-          return { title };
-        }
-        return post;
       });
     } else {
       return [];

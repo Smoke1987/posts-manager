@@ -1,0 +1,10 @@
+:host {
+  tr:not(.mat-mdc-header-row) {
+    &:hover {
+      background: var(--primary-100) !important;
+    }
+    &:focus {
+      background: var(--primary-50);
+    }
+  }
+}

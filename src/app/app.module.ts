@@ -4,16 +4,16 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { StoreModule } from '@ngrx/store';
 import { MatButton } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomePageComponent } from './pages/home-page/home-page.component';
 import { AppStateModule } from './state/app-state.module';
+import { AppPaginatorIntl } from './services/utils/mat-paginator-intl.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomePageComponent,
   ],
   imports: [
     BrowserModule,
@@ -24,7 +24,8 @@ import { AppStateModule } from './state/app-state.module';
     HttpClientModule,
   ],
   providers: [
-    provideAnimationsAsync('noop')
+    provideAnimationsAsync('noop'),
+    { provide: MatPaginatorIntl, useClass: AppPaginatorIntl },
   ],
   bootstrap: [AppComponent]
 })

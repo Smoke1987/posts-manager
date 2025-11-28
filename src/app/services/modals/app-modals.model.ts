@@ -5,3 +5,10 @@ export type AppModalConfig = Omit<DialogConfig, 'data' | 'providers' | 'containe
 export type AppModalData = {
   modalId?: string;
 }
+
+export type AppConfirmModalData = AppModalData & {
+  title?: string;
+  text?: string;
+  okBtnText?: string;
+  cancelBtnText?: string;
+}
