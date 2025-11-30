@@ -28,6 +28,18 @@
   }
 }
 
+@mixin xxs-screen-max() {
+  @media only screen and (max-width: 360px) {
+    @content;
+  }
+}
+
+@mixin mat-mobile-max() {
+  @media only screen and (max-width: 599px) {
+    @content;
+  }
+}
+
 @mixin xs-screen-max() {
   @media only screen and (max-width: 575px) {
     @content;

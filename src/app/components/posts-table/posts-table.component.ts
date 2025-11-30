@@ -1,4 +1,16 @@
-import { Component, HostListener, inject, input, OnInit, output, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  OnInit,
+  output,
+  QueryList,
+  Renderer2,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -10,6 +22,8 @@ import { AppLoaderComponent } from '../app-loader/app-loader.component';
 import { UserRole } from '../../models/users.model';
 import { DisplayFieldLabel, DisplayFieldName, IPost } from '../../models/posts.model';
 import { AppScreenSize } from '../../models/common.model';
+import { PostsService } from '../../services/posts/posts.service';
+import { UsersService } from '../../services/users/users.service';
 
 @Component({
   selector: 'app-posts-table',
@@ -32,12 +46,16 @@ import { AppScreenSize } from '../../models/common.model';
 })
 export class PostsTableComponent implements OnInit {
   renderer = inject(Renderer2);
+  postsService = inject(PostsService);
+  usersService = inject(UsersService);
 
   dataSource = input.required<MatTableDataSource<IPost>>();
-  userRole = input<UserRole | null>(null);
+  showFooterRow = input<boolean>(false);
   displayedColumns = input<DisplayFieldName[]>([]);
   displayFieldLabels = input<DisplayFieldLabel>({});
   displayFieldLabelsShort = input<DisplayFieldLabel>({});
+  selectable = input<boolean>(true);
+  initialPostId = input<number>();
 
   dataLoading = input<boolean, boolean>(true, {
     transform: (value: boolean) => {
@@ -45,6 +63,11 @@ export class PostsTableComponent implements OnInit {
         setTimeout(() => {
           this.dataSource().paginator = this.paginator;
           this.dataSource().sort = this.sort;
+
+          const initialPostId = this.initialPostId();
+          if (initialPostId) {
+            this.findAndScrollToRow(initialPostId, true);
+          }
         });
       }
       return value;
@@ -56,7 +79,10 @@ export class PostsTableComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  selectedPost: IPost | null = null;
+  @ViewChildren('tableRow', { read: ElementRef }) tableRows!: QueryList<ElementRef<HTMLTableRowElement>>;
+
+  _selectedPost: IPost | null = null;
+  userRole: UserRole | null = null;
 
   clickAfterFocus = true;
   tabPressed = false;
@@ -66,6 +92,10 @@ export class PostsTableComponent implements OnInit {
 
   useShortNames = false;
 
+  preventUnselectResolver?: (needPrevent: boolean) => void;
+  preventUnselectCheck: () => Promise<boolean> = () => new Promise<boolean>((resolve) => this.preventUnselectResolver = resolve);
+  rowFocused = false;
+
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Tab') {
@@ -73,8 +103,28 @@ export class PostsTableComponent implements OnInit {
     }
   }
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    let needPrevent = false;
+    if (target) {
+      const hasPreventDataAttrElem = target.closest('[data-prevent-unselect-row="true"]');
+      needPrevent = !!hasPreventDataAttrElem;
+    }
+    this.preventUnselectResolver?.(needPrevent);
+  }
+
   get _displayFieldLabels(): DisplayFieldLabel {
     return this.useShortNames ? this.displayFieldLabelsShort() : this.displayFieldLabels();
+  }
+
+  set selectedPost(post: IPost | null) {
+    this._selectedPost = post;
+    this.postsService.selectedPost = post;
+  }
+
+  get selectedPost(): IPost | null {
+    return this._selectedPost;
   }
 
   async ngOnInit(): Promise<void> {
@@ -82,6 +132,7 @@ export class PostsTableComponent implements OnInit {
       this.handleResize();
     });
     this.handleResize();
+    this.userRole = await this.usersService.getUserRole();
   }
 
   /**
@@ -141,8 +192,12 @@ export class PostsTableComponent implements OnInit {
     this.focusPost($event.target as HTMLElement, post);
   }
 
-  onBlurRow($event: Event, post: IPost): void {
-    this.selectedPost = null;
+  async onBlurRow($event: Event, post: IPost): Promise<void> {
+    const preventUnselect = await this.preventUnselectCheck();
+    if (!preventUnselect) {
+      this.selectedPost = null;
+      this.postsService.selectedPostElement = null;
+    }
   }
 
   focusPost(rowElem: HTMLElement | null, post: IPost): void {
@@ -168,6 +223,7 @@ export class PostsTableComponent implements OnInit {
     }
 
     this.selectedPost = post;
+    this.postsService.selectedPostElement = focusingElem;
   }
 
   getFooterValue(field: DisplayFieldName): string {
@@ -180,5 +236,59 @@ export class PostsTableComponent implements OnInit {
 
   onPostClicked(post: IPost): void {
     this.postClicked.emit(post);
+  }
+
+  private findAndScrollToRow(targetId: number, shouldFocus: boolean): void {
+    // First, find which page contains our target row
+    const rowIndex = this.dataSource().data.findIndex(row => row.id === targetId);
+
+    if (rowIndex === -1) {
+      // Row with ID not found
+      return;
+    }
+
+    const pageSize = this.paginator.pageSize;
+    const targetPage = Math.floor(rowIndex / pageSize);
+
+    // If the row is not on the current page, change page first
+    if (this.paginator.pageIndex !== targetPage) {
+      this.paginator.pageIndex = targetPage;
+      this.paginator._changePageSize(this.paginator.pageSize);
+
+      // Wait for the page change to complete and rows to render
+      setTimeout(() => {
+        this.scrollToRowOnCurrentPage(targetId, shouldFocus);
+      }, 100);
+    } else {
+      this.scrollToRowOnCurrentPage(targetId, shouldFocus);
+    }
+  }
+
+  private scrollToRowOnCurrentPage(targetId: number, shouldFocus: boolean): void {
+    // Give Angular time to render the rows after page change
+    setTimeout(() => {
+      const targetRow = this.tableRows.find(row => {
+        const rowElement = row.nativeElement;
+        const cell = rowElement?.querySelector('[data-id]') as HTMLElement;
+        return cell && parseInt(cell.getAttribute('data-id')!) === targetId;
+      });
+
+      if (targetRow) {
+        const rowElement = targetRow.nativeElement;
+
+        // Scroll the row into view
+        rowElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+
+        // Focus if requested
+        if (shouldFocus) {
+          this.tabPressed = true;
+          rowElement.focus();
+        }
+      }
+    }, 50);
   }
 }

@@ -5,16 +5,18 @@
 
         <ng-container *ngFor="let _field of displayedColumns()" [matColumnDef]="_field">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ _displayFieldLabels[_field] }} </th>
-          <td mat-cell *matCellDef="let element"> {{ element[_field] }} </td>
+          <td mat-cell *matCellDef="let element" [attr.data-id]="_field === 'title' ? element.id : undefined"> {{ element[_field] }} </td>
 
-          <ng-container *ngIf="userRole() === 'admin'">
+          <ng-container *ngIf="userRole === 'admin'">
             <td mat-footer-cell *matFooterCellDef>{{ getFooterValue(_field) }}</td>
           </ng-container>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
-        <tr mat-row
-            tabindex="0"
+        <tr #tableRow
+            mat-row
+            data-prevent-unselect-row="true"
+            [tabindex]="selectable() ? 0 : -1"
             *matRowDef="let row; columns: displayedColumns();"
             (keydown.enter)="onEnterPressed($event, row)"
             (focus)="onFocusRow($event, row)"
@@ -22,7 +24,7 @@
             (click)="onRowClicked($event, row)"
         ></tr>
 
-        <ng-container *ngIf="userRole() === 'admin'">
+        <ng-container *ngIf="showFooterRow() && userRole === 'admin'">
           <tr mat-footer-row *matFooterRowDef="displayedColumns()" [ngClass]="{'hidden': !selectedPost}"></tr>
         </ng-container>
       </table>

@@ -1,4 +1,5 @@
 import { UserRole } from './users.model';
+import { AppFormGroupWithOptional, ModifyNumberToNullable } from './utils.model';
 
 export interface IPost {
   userId: number;
@@ -20,3 +21,7 @@ export type DisplayFieldName = typeof AllFieldNames[number];
 export type UserDisplayFieldName = { [Role in UserRole]: DisplayFieldName[] }
 
 export type DisplayFieldLabel = { [Field in DisplayFieldName]?: string }
+
+export type PostEditMode = 'add' | 'edit';
+
+export type EditPostForm = AppFormGroupWithOptional<ModifyNumberToNullable<IPost>>;

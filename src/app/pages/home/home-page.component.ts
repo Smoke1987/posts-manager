@@ -19,6 +19,10 @@ import {
 import { AppLoaderComponent } from '../../components/app-loader/app-loader.component';
 import { UserRole } from '../../models/users.model';
 import { PostsTableComponent } from '../../components/posts-table/posts-table.component';
+import {
+  ContentWithButtonsLayoutComponent
+} from '../../layouts/content-with-buttons-layout/content-with-buttons-layout.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-page',
@@ -36,11 +40,13 @@ import { PostsTableComponent } from '../../components/posts-table/posts-table.co
     NgIf,
     PostsTableComponent,
     MatButtonModule,
+    ContentWithButtonsLayoutComponent,
   ],
 })
 export class HomePageComponent implements OnInit {
   usersService = inject(UsersService);
   postsService = inject(PostsService);
+  router = inject(Router);
 
   userRole: UserRole | null = null;
   displayedColumns: DisplayFieldName[] = [];
@@ -48,10 +54,6 @@ export class HomePageComponent implements OnInit {
   displayFieldLabelsShort = displayFieldLabelsShort;
   dataSource = new MatTableDataSource<IPost>([]);
   dataLoading = true;
-
-  async getUserRole(): Promise<UserRole | null> {
-    return this.usersService.getUserRole();
-  }
 
   async ngOnInit(): Promise<void> {
     await this.postsService.postsLoadedPromise;
@@ -61,7 +63,7 @@ export class HomePageComponent implements OnInit {
       this.postsService.userPosts$,
     ]).subscribe({
       next: async ([user, posts]) => {
-        this.userRole = await this.getUserRole();
+        this.userRole = await this.usersService.getUserRole();
         if (this.userRole) {
           this.displayedColumns = userRoleMainDisplayFields[this.userRole];
         } else {
@@ -85,7 +87,6 @@ export class HomePageComponent implements OnInit {
   }
 
   goToDetails(post: IPost): any {
-    // TODO
-    console.log('HomePageComponent @ goToDetails():: ', { post, _this: this });
+    this.router.navigate([`/details/${post.userId}`]);
   }
 }

@@ -12,4 +12,10 @@ const initialState: PostsState = {
 export const postsReducer = createReducer(
   initialState,
   on(PostsActions.postsLoaded, (state, { posts }) => ({ ...state, posts })),
+  on(PostsActions.updatePostById, (state, { id, updates }) => ({
+    ...state,
+    posts: (state.posts || []).map(post =>
+      post.id === id ? { ...post, ...updates } : post
+    ),
+  }))
 );

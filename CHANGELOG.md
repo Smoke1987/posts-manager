@@ -1,6 +1,9 @@
-### v 0.0.4 (+2h 30m, )
+### v 0.0.4 (+2h 30m, +8h 30m)
 1. Add adaptive
 2. Refactor posts-table
+3. Add navigate with selection
+4. Add details
+5. Add editing posts
 ---
 
 ### v 0.0.3 (+1h, +2h, +1h, +3h, +7h)

@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth.guard';
 
 import { HomePageComponent } from './pages/home/home-page.component';
 import { DetailsPageComponent } from './pages/details/details-page.component';
+import { EditPostComponent } from './pages/edit-post/edit-post.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,15 @@ const routes: Routes = [
     canActivate: [authGuard],
     data: {
       showBackButton: true,
+    },
+  },
+  {
+    path: 'edit-post',
+    pathMatch: 'full',
+    component: EditPostComponent,
+    canActivate: [authGuard],
+    data: {
+      showBackButton: false,
     },
   },
   {

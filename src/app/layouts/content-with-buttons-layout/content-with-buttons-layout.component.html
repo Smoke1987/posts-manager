@@ -1,0 +1,7 @@
+<div class="main-content-wrapper">
+  <ng-content select="[main-content]"></ng-content>
+</div>
+
+<div class="buttons-content-wrapper" *ngIf="hasButtonsContent">
+  <ng-content select="[buttons-content]"></ng-content>
+</div>

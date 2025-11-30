@@ -1,3 +1,5 @@
+@use "adaptive";
+
 :host {
   --avatar-size: 28px;
   --login-font-size: 22px;
@@ -21,6 +23,7 @@
       padding: var(--back-btn-padding);
       width: calc(var(--back-btn-padding) * 2 + var(--back-btn-icon-size));
       height: calc(var(--back-btn-padding) * 2 + var(--back-btn-icon-size));
+      display: flex;
 
       mat-icon {
         width: var(--back-btn-icon-size);
@@ -35,7 +38,8 @@
         align-items: center;
 
         .user-name {
-          font-size: var(--login-font-size);
+          font-size: var(--mat-toolbar-title-text-size);
+          line-height: var(--mat-toolbar-title-text-line-height);
           letter-spacing: normal;
           text-transform: capitalize;
         }
@@ -47,6 +51,30 @@
           margin-left: 8px;
         }
       }
+    }
+  }
+
+  @include adaptive.mat-mobile-max {
+    --mat-toolbar-title-text-line-height: 28px;
+    --mat-toolbar-title-text-size: 16px;
+    --back-btn-padding: 8px;
+    --back-btn-icon-size: 28px;
+
+    .mat-toolbar-row,
+    .mat-toolbar-single-row {
+      padding: 0 10px;
+    }
+  }
+
+  @include adaptive.xxs-screen-max {
+    --mat-toolbar-title-text-line-height: 20px;
+    --mat-toolbar-title-text-size: 12px;
+    --back-btn-padding: 4px;
+    --back-btn-icon-size: 16px;
+
+    .mat-toolbar-row,
+    .mat-toolbar-single-row {
+      padding: 0 6px;
     }
   }
 }

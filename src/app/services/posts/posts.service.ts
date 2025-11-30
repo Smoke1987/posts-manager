@@ -3,13 +3,15 @@ import { APP_CONFIG } from '../../app-config';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 
-import { catchError, of } from 'rxjs';
+import { catchError, firstValueFrom, Observable, of } from 'rxjs';
 
 import { IPost } from '../../models/posts.model';
 import * as PostsSelectors from '../../state/selectors/posts.selector';
-import { postsLoaded } from '../../state/actions/posts.actions';
+import { postsLoaded, updatePostById } from '../../state/actions/posts.actions';
 
 import postsData from './data.json';
+import { selectUniquePostValues } from '../../state/selectors/posts.selector';
+import { ModifyNumberToNullable } from '../../models/utils.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +24,14 @@ export class PostsService {
   apiBaseUrl = this.appConfig.apiUrl;
 
   posts: IPost[] = [];
+  selectedPost: IPost | null = null;
+  selectedPostElement: HTMLElement | null = null;
 
   userPosts$ = this.store.select(PostsSelectors.selectVisiblePosts);
+
+  selectedUserPosts$: (userId: number) => Observable<IPost[]> = (userId: number) => {
+    return this.store.select(PostsSelectors.selectVisiblePostsByUserId(userId));
+  }
 
   postsLoadedResolver?: () => void;
   postsLoadedPromise = new Promise<void>(resolve => this.postsLoadedResolver = resolve);
@@ -35,7 +43,7 @@ export class PostsService {
         .pipe(
           catchError((error) => {
             // Fallback data for resource restriction
-            return of(Array(...postsData as IPost[]));
+            return of(postsData as IPost[]);
           }),
         )
         .subscribe({
@@ -54,5 +62,43 @@ export class PostsService {
           }
         });
     });
+  }
+
+  async getAllUsersIds(): Promise<number[]> {
+    return await firstValueFrom(this.store.select(PostsSelectors.selectUniquePostValues('userId')));
+  }
+
+  async getAllPostsIds(): Promise<number[]> {
+    return await firstValueFrom(this.store.select(PostsSelectors.selectUniquePostValues('id')));
+  }
+
+  async findFirstAvailablePostIds(): Promise<number> {
+    const allPostsIds = await this.getAllPostsIds();
+    if (!allPostsIds.length) return 1;
+
+    // Сортируем массив для последовательной проверки
+    const sorted = [...allPostsIds].sort((a, b) => a - b);
+
+    // Ищем первое пропущенное число
+    for (let i = 0; i < sorted.length; i++) {
+      if (sorted[i] !== i + 1) {
+        return i + 1;
+      }
+    }
+
+    // Если все числа последовательны, возвращаем следующее
+    return sorted.length + 1;
+  }
+
+  async checkAvailablePostId(postId: number | string): Promise<boolean> {
+    const allPostsIds = await this.getAllPostsIds();
+    if (typeof postId === 'string') {
+      postId = parseInt(postId, 10);
+    }
+    return !allPostsIds.includes(postId);
+  }
+
+  updatePost(updatedPost: Partial<ModifyNumberToNullable<IPost>>): void {
+    this.store.dispatch(updatePostById({ id: updatedPost.id!, updates: updatedPost as IPost }));
   }
 }

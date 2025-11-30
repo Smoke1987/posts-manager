@@ -13,4 +13,8 @@
   .hidden {
     display: none !important;
   }
+
+  textarea[appManualAutosize] {
+    resize: none;
+  }
 }

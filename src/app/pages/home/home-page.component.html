@@ -1,12 +1,22 @@
 <app-header [title]="'Posts manager'"></app-header>
 
-<app-posts-table
-  [dataLoading]="dataLoading"
-  [dataSource]="dataSource"
-  [displayedColumns]="displayedColumns"
-  [displayFieldLabels]="displayFieldLabels"
-  [displayFieldLabelsShort]="displayFieldLabelsShort"
-  (postClicked)="goToDetails($event)"
-></app-posts-table>
+<app-content-with-buttons-layout class="reversed">
+  <app-posts-table
+    main-content
+    [showFooterRow]="true"
+    [dataLoading]="dataLoading"
+    [dataSource]="dataSource"
+    [displayedColumns]="displayedColumns"
+    [displayFieldLabels]="displayFieldLabels"
+    [displayFieldLabelsShort]="displayFieldLabelsShort"
+    [initialPostId]="postsService.selectedPost?.id"
+    (postClicked)="goToDetails($event)"
+  ></app-posts-table>
 
-<button mat-button (click)="refreshData()">{{ 'Обновить' }}</button>
+  <ng-container buttons-content #buttonsContent>
+    <ng-container *ngIf="!dataLoading">
+      <button mat-flat-button (click)="refreshData()" class="update-data-btn" color="primary">{{ 'Обновить' }}</button>
+    </ng-container>
+  </ng-container>
+
+</app-content-with-buttons-layout>

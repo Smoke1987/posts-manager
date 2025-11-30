@@ -11,6 +11,12 @@
     &:focus {
       background: var(--focus-row-bg);
     }
+
+    &[tabindex="-1"] {
+       pointer-events: none;
+       --hover-row-bg: transparent;
+       --focus-row-bg: transparent;
+    }
   }
 
   @include xs-screen-max {

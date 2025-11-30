@@ -1,0 +1,19 @@
+:host {
+  app-content-with-buttons-layout {
+    --margin-top: 24px;
+  }
+
+  .edit-post-form-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .field-50 {
+      flex-basis: calc(50% - 6px);
+    }
+
+    .field-100 {
+      flex-basis: 100%;
+    }
+  }
+}
