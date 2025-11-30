@@ -29,27 +29,30 @@ export class PostsService {
   postsLoadedPromise = new Promise<void>(resolve => this.postsLoadedResolver = resolve);
 
   async loadPosts(): Promise<void> {
-    this.httpClient.get<IPost[]>(`${this.apiBaseUrl}/posts`)
-    // of(postsData as IPost[])
-      .pipe(
-        catchError((error) => {
-          // Fallback data for resource restriction
-          return of(postsData as IPost[]);
-        }),
-      )
-      .subscribe({
-        next: (posts) => {
-          this.posts = (posts || []).map((post) => {
-            post.count = posts.filter(_ => _.userId === post.userId)?.length;
-            return post;
-          });
+    return new Promise<void>((resolve) => {
+      // this.httpClient.get<IPost[]>(`${this.apiBaseUrl}/posts`)
+      of(postsData as IPost[])
+        .pipe(
+          catchError((error) => {
+            // Fallback data for resource restriction
+            return of(Array(...postsData as IPost[]));
+          }),
+        )
+        .subscribe({
+          next: (posts) => {
+            this.posts = (posts || []).map((post) => ({
+              ...post,
+              count: posts.filter(_ => _.userId === post.userId)?.length
+            }));
 
-          this.store.dispatch(postsLoaded({ posts: this.posts }));
-          this.postsLoadedResolver?.();
-        },
-        error: (error) => {
-          // Handle error
-        }
-      });
+            this.store.dispatch(postsLoaded({ posts: this.posts }));
+            this.postsLoadedResolver?.();
+            resolve();
+          },
+          error: (error) => {
+            // Handle error
+          }
+        });
+    });
   }
 }

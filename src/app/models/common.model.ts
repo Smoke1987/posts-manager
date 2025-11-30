@@ -23,3 +23,12 @@ export interface ICommonResult {
 export interface IAuthResult extends ICommonResult {
   user?: IUser;
 }
+
+export const AllScreenSizes = [
+  'xs-screen',
+  'sm-screen',
+  'md-screen',
+  'lg-screen',
+  'xl-screen',
+] as const;
+export type AppScreenSize = typeof AllScreenSizes[number];

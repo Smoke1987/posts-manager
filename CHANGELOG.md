@@ -1,7 +1,13 @@
+### v 0.0.4 (+2h 30m, )
+1. Add adaptive
+2. Refactor posts-table
+---
+
 ### v 0.0.3 (+1h, +2h, +1h, +3h, +7h)
 1. Add login feature
 2. Add styles
 3. Add store features
+4. Add main table features
 ---
 
 ### v 0.0.3 (+2h)

@@ -12,7 +12,7 @@ export const userRoleDetailsDisplayFields: UserDisplayFieldName = {
 
 export const displayFieldLabels: DisplayFieldLabel = {
   userId: 'ID пользователя',
-  id: '№',
+  id: '№ поста',
   title: 'Заголовок',
   body: 'Текст',
   count: 'Количество постов пользователя',

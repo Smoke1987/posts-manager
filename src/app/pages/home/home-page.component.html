@@ -1,42 +1,12 @@
 <app-header [title]="'Posts manager'"></app-header>
 
-<ng-container *ngIf="!dataLoading; else loading">
-  <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort>
+<app-posts-table
+  [dataLoading]="dataLoading"
+  [dataSource]="dataSource"
+  [displayedColumns]="displayedColumns"
+  [displayFieldLabels]="displayFieldLabels"
+  [displayFieldLabelsShort]="displayFieldLabelsShort"
+  (postClicked)="goToDetails($event)"
+></app-posts-table>
 
-      <ng-container *ngFor="let _field of displayedColumns" [matColumnDef]="_field">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ displayFieldLabels[_field] }} </th>
-        <td mat-cell *matCellDef="let element"> {{ element[_field] }} </td>
-
-        <ng-container *ngIf="userRole === 'admin'">
-          <td mat-footer-cell *matFooterCellDef>{{ getFooterValue(_field) }}</td>
-        </ng-container>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row
-          tabindex="0"
-          *matRowDef="let row; columns: displayedColumns;"
-          (keydown.enter)="onEnterPressed($event, row)"
-          (focus)="onFocusRow($event, row)"
-          (blur)="onBlurRow($event, row)"
-          (click)="onRowClicked($event, row)"
-      ></tr>
-
-      <ng-container *ngIf="userRole === 'admin'">
-        <tr mat-footer-row *matFooterRowDef="displayedColumns" [ngClass]="{'hidden': !selectedPost}"></tr>
-      </ng-container>
-    </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-                   [showFirstLastButtons]="true"
-                   aria-label="Select page">
-    </mat-paginator>
-  </div>
-
-  <button mat-button (click)="debug()">Debug</button>
-</ng-container>
-
-<ng-template #loading>
-  <app-loader [message]="'Загрузка данных...'"></app-loader>
-</ng-template>
+<button mat-button (click)="refreshData()">{{ 'Обновить' }}</button>
