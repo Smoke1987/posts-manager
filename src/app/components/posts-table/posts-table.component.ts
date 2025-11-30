@@ -41,7 +41,7 @@ export class PostsTableComponent implements OnInit {
 
   dataLoading = input<boolean, boolean>(true, {
     transform: (value: boolean) => {
-      if (value && !this.dataSource().paginator) {
+      if (!value) {
         setTimeout(() => {
           this.dataSource().paginator = this.paginator;
           this.dataSource().sort = this.sort;
