@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatTableDataSource } from '@angular/material/table';
+import { Store } from '@ngrx/store';
 
 import { combineLatest } from 'rxjs';
 
@@ -21,6 +22,8 @@ import { PostsService } from '../../services/posts/posts.service';
 import { UserRole } from '../../models/users.model';
 import { DisplayFieldName, IPost, PostEditMode } from '../../models/posts.model';
 import { AlertsService } from '../../services/alerts/alerts.service';
+import { AppModalsService } from '../../services/modals/app-modals.service';
+import { removePost } from '../../state/actions/posts.actions';
 
 @Component({
   selector: 'app-details',
@@ -41,6 +44,8 @@ export class DetailsPageComponent implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   alertsService = inject(AlertsService);
+  modalsService = inject(AppModalsService);
+  store = inject(Store);
 
   userRole: UserRole | null = null;
   displayedColumns: DisplayFieldName[] = [];
@@ -102,12 +107,20 @@ export class DetailsPageComponent implements OnInit {
     this.router.navigate(['/edit-post'], { state });
   }
 
-  removePost(): void {
+  async removePost(): Promise<void> {
     if (this.userRole !== 'admin') {
       this.alertsService.showErrorAlert('Вам не доступно данное действие', {
         restoreFocus: this.postsService.selectedPostElement ?? undefined,
       });
       return;
+    }
+    if (this.userRole === 'admin') {
+      const removeConfirmed = await this.modalsService.showConfirmModal({ title: 'Удаление публикации', text: 'Подтверждаете данное действие?', okBtnText: 'Да' });
+      if (removeConfirmed && this.postsService.selectedPost) {
+        this.store.dispatch(removePost({ id: this.postsService.selectedPost.id }));
+        this.postsService.selectedPost = null;
+        this.postsService.selectedPostElement = null;
+      }
     }
   }
 }

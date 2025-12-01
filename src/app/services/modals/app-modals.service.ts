@@ -17,10 +17,10 @@ export class AppModalsService {
   ) {
   }
 
-  async showConfirmModal(data: AppConfirmModalData = {}): Promise<boolean> {
+  async showConfirmModal(data: AppConfirmModalData = {}, config: AppModalConfig = {}): Promise<boolean> {
     const { ConfirmModalComponent } = await import('../../modals/confirm-modal/confirm-modal.component');
     const confirmed = await firstValueFrom(
-      this.openModal<boolean, AppConfirmModalData>(ConfirmModalComponent, data, {})
+      this.openModal<boolean, AppConfirmModalData>(ConfirmModalComponent, data, config)
     );
 
     return !!confirmed;

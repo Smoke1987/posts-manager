@@ -17,6 +17,8 @@ import { MatInput } from '@angular/material/input';
 import { Location, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { Store } from '@ngrx/store';
+
 import { UserRole } from '../../models/users.model';
 import { UsersService } from '../../services/users/users.service';
 import { PostsService } from '../../services/posts/posts.service';
@@ -30,6 +32,8 @@ import {
 } from '../../directives/text-area-auto-size.directive';
 import { declOfNum } from '../../services/utils/utils.helpers';
 import { ModifyNumberToNullable } from '../../models/utils.model';
+import { addPost, updatePostById } from '../../state/actions/posts.actions';
+import { AppModalsService } from '../../services/modals/app-modals.service';
 
 @Component({
   selector: 'app-edit-post',
@@ -61,6 +65,8 @@ export class EditPostComponent implements OnInit {
   usersService = inject(UsersService);
   postService = inject(PostsService);
   location = inject(Location);
+  store = inject(Store);
+  modalsService = inject(AppModalsService);
 
   mode: PostEditMode = 'add';
   userRole: UserRole | null = null;
@@ -136,6 +142,12 @@ export class EditPostComponent implements OnInit {
       this.patchValues();
     }
 
+    if (this.mode === 'add' && this.postIdControl && this.availablePostId) {
+      this.postIdControl.patchValue(this.availablePostId);
+      this.postIdControl.markAsTouched();
+      this.postForm.updateValueAndValidity();
+    }
+
     // Если обновили страницу - назначим "выбранный пост"
     if (!this.postService.selectedPost && this.editingPost)  {
       this.postService.selectedPost = this.editingPost;
@@ -197,11 +209,12 @@ export class EditPostComponent implements OnInit {
   }
 
   submitAdd(): void {
-
+    if (!this.postForm?.valid) return;
+    this.addPost(this.postForm?.value || {});
   }
 
   submitEdit(): void {
-    const formValue: Partial<ModifyNumberToNullable<IPost>> = this.postForm?.value || {};
+    if (!this.postForm?.valid) return;
 
     const postChanged = this.postHasChanges();
 
@@ -210,7 +223,7 @@ export class EditPostComponent implements OnInit {
         ...this.editingPost,
         ...this.postForm?.value,
       };
-      this.postService.updatePost(updatedPost);
+      this.updatePost(updatedPost);
     }
   }
 
@@ -232,5 +245,29 @@ export class EditPostComponent implements OnInit {
     const reqText = declOfNum(params.requiredLength, ['символ', 'символа', 'символов']);
     const actText = declOfNum(params.actualLength, ['символ', 'символа', 'символов']);
     return `Допустимая длина заголовка: ${params.requiredLength} ${reqText}, текущая длина: ${params.actualLength} ${actText}`;
+  }
+
+  updatePost(updatedPost: Partial<ModifyNumberToNullable<IPost>>): void {
+    this.store.dispatch(updatePostById({ id: updatedPost.id!, updates: updatedPost as IPost }));
+    this.showResultModal('edit');
+  }
+
+  addPost(addingPost: Partial<ModifyNumberToNullable<IPost>>): void {
+    this.store.dispatch(addPost( { post: addingPost as IPost } ));
+    this.showResultModal('add');
+  }
+
+  async showResultModal(mode: PostEditMode): Promise<void> {
+    if (mode === 'add') {
+      this.postService.selectedPost = {
+        ...this.postForm?.value as IPost
+      };
+    }
+    const text = mode === 'add' ? 'Пост добавлен' : 'Пост изменен';
+    await this.modalsService.showConfirmModal(
+      { title: '', text, okBtnText: '', cancelBtnText: '', autoCloseTimeout: 10000 },
+      { disableClose: true },
+    );
+    this.goBack();
   }
 }

@@ -1,17 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { APP_CONFIG } from '../../app-config';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 
 import { catchError, firstValueFrom, Observable, of } from 'rxjs';
 
+import { APP_CONFIG } from '../../app-config';
+
 import { IPost } from '../../models/posts.model';
 import * as PostsSelectors from '../../state/selectors/posts.selector';
-import { postsLoaded, updatePostById } from '../../state/actions/posts.actions';
+import { postsLoaded } from '../../state/actions/posts.actions';
 
 import postsData from './data.json';
-import { selectUniquePostValues } from '../../state/selectors/posts.selector';
-import { ModifyNumberToNullable } from '../../models/utils.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,8 +37,8 @@ export class PostsService {
 
   async loadPosts(): Promise<void> {
     return new Promise<void>((resolve) => {
-      // this.httpClient.get<IPost[]>(`${this.apiBaseUrl}/posts`)
-      of(postsData as IPost[])
+      this.httpClient.get<IPost[]>(`${this.apiBaseUrl}/posts`)
+      // of(postsData as IPost[])
         .pipe(
           catchError((error) => {
             // Fallback data for resource restriction
@@ -98,7 +97,4 @@ export class PostsService {
     return !allPostsIds.includes(postId);
   }
 
-  updatePost(updatedPost: Partial<ModifyNumberToNullable<IPost>>): void {
-    this.store.dispatch(updatePostById({ id: updatedPost.id!, updates: updatedPost as IPost }));
-  }
 }

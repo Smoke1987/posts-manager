@@ -11,4 +11,5 @@ export type AppConfirmModalData = AppModalData & {
   text?: string;
   okBtnText?: string;
   cancelBtnText?: string;
+  autoCloseTimeout?: number;
 }

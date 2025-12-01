@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { AfterViewInit, Component, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -26,11 +26,12 @@ import { NgIf } from '@angular/common';
     NgIf
   ],
 })
-export class ConfirmModalComponent {
+export class ConfirmModalComponent implements AfterViewInit {
   title = '';
   text = '';
   okBtnText = '';
   cancelBtnText = '';
+  autoCloseTimeout = -1;
 
   constructor(
     private modalsService: AppModalsService,
@@ -38,8 +39,20 @@ export class ConfirmModalComponent {
   ) {
     this.title = data.title ?? 'Подтвердите действие';
     this.text = data.text ?? '';
-    this.okBtnText = data.okBtnText || 'OK';
-    this.cancelBtnText = data.cancelBtnText || 'Отмена';
+    this.okBtnText = data.okBtnText ?? 'OK';
+    this.cancelBtnText = data.cancelBtnText ?? 'Отмена';
+
+    if (data.autoCloseTimeout) {
+      this.autoCloseTimeout = data.autoCloseTimeout;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.autoCloseTimeout && this.autoCloseTimeout > 0) {
+      setTimeout(() => {
+        this.close(false);
+      }, this.autoCloseTimeout);
+    }
   }
 
   close(confirmed: boolean): void {

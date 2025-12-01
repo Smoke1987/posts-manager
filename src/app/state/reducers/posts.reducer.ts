@@ -17,5 +17,26 @@ export const postsReducer = createReducer(
     posts: (state.posts || []).map(post =>
       post.id === id ? { ...post, ...updates } : post
     ),
-  }))
+  })),
+  on(PostsActions.removePost, (state, { id }) => ({
+    ...state,
+    posts: (state.posts || []).filter(post => post.id !== id).map((post) => ({
+      ...post,
+      count: (state.posts || []).filter(_ => _.userId === post.userId)?.length
+    }))
+  })),
+  on(PostsActions.addPost, (state, { post }) => ({
+    ...state,
+    posts: [...(state.posts || []), ...(post ? [post] : [])]
+      .sort((a, b) => {
+        if (a.userId !== b.userId) {
+          return a.userId - b.userId;
+        }
+
+        return a.id - b.id;
+      }).map((post) => ({
+        ...post,
+        count: (state.posts || []).filter(_ => _.userId === post.userId)?.length
+      })),
+  })),
 );

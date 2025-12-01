@@ -11,3 +11,13 @@ export const updatePostById = createAction(
   '[Posts] Update Post By Id',
   props<{ id: number; updates: Partial<IPost> }>()
 );
+
+export const removePost = createAction(
+  '[Posts] Remove Post By Id',
+  props<{ id: number }>()
+);
+
+export const addPost = createAction(
+  '[Posts] Add Post',
+  props<{ post: IPost }>(),
+);

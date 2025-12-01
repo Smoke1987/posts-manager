@@ -11,7 +11,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
@@ -76,6 +76,7 @@ export class PostsTableComponent implements OnInit {
 
   postClicked = output<IPost>();
 
+  @ViewChild(MatTable) table!: MatTable<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -94,7 +95,6 @@ export class PostsTableComponent implements OnInit {
 
   preventUnselectResolver?: (needPrevent: boolean) => void;
   preventUnselectCheck: () => Promise<boolean> = () => new Promise<boolean>((resolve) => this.preventUnselectResolver = resolve);
-  rowFocused = false;
 
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
