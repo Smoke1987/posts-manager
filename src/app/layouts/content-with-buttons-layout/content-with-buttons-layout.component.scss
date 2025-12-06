@@ -1,0 +1,31 @@
+@use "adaptive";
+
+:host {
+  display: inline-flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+  --margin-top: 0px;
+
+  .buttons-content-wrapper {
+    padding: 0 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: var(--margin-top);
+
+    @include adaptive.mat-mobile-max {
+      flex-direction: column;
+    }
+  }
+}
+
+:host-context(app-home-page) {
+  flex-direction: column-reverse;
+  --margin-top: 20px;
+}
+
+:host(.reversed) {
+  flex-direction: column-reverse;
+  --margin-top: 20px;
+}

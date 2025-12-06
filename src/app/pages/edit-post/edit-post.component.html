@@ -1,0 +1,60 @@
+<app-header [title]="title"></app-header>
+
+<app-content-with-buttons-layout>
+  <div class="edit-post-content" main-content>
+    <div *ngIf="postForm" [formGroup]="postForm" class="edit-post-form-wrapper">
+      <mat-form-field *ngIf="userIdControl" class="field-50">
+        <mat-label>ID пользователя</mat-label>
+        <mat-select [formControl]="userIdControl" required>
+          @for (userId of allUserIds; track userId) {
+          <mat-option [value]="userId">{{ userId }}</mat-option>
+          }
+        </mat-select>
+        @if (userIdControl.hasError('required')) {
+        <mat-error>Выберите ID пользователя</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field *ngIf="postIdControl" class="field-50">
+        <mat-label>{{ 'ID публикации' }}</mat-label>
+        <input matInput formControlName="id">
+        @if (postIdControl.hasError('NaNError')) {
+        <mat-error>{{ postIdControl.getError('NaNError') }}</mat-error>
+        } @else if (postIdControl.hasError('required')) {
+        <mat-error>Укажите ID публикации</mat-error>
+        } @else if (postIdControl.hasError('NotAvailable')) {
+        <mat-error>{{ postIdControl.getError('NotAvailable') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field *ngIf="titleControl" class="field-100">
+        <mat-label>{{ 'Заголовок публикации' }}</mat-label>
+        <input matInput formControlName="title">
+        @if (titleControl.hasError('maxlength')) {
+        <mat-error>{{ getTitleError(titleControl.getError('maxlength')) }}</mat-error>
+        } @else if (titleControl.hasError('required')) {
+        <mat-error>Укажите заголовок публикации</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field *ngIf="bodyControl" class="field-100">
+        <mat-label>{{ 'Текст публикации' }}</mat-label>
+        <textarea matInput
+                  formControlName="body"
+                  appManualAutosize
+                  [minRows]="3"
+                  [maxRows]="10"
+        ></textarea>
+        @if (bodyControl.hasError('required')) {
+        <mat-error>Укажите текст публикации</mat-error>
+        }
+      </mat-form-field>
+    </div>
+  </div>
+
+  <ng-container buttons-content #buttonsContent>
+    <button mat-flat-button (click)="onSubmitClicked()" color="primary" [disabled]="!postForm?.valid || !postHasChanges()">{{ 'OK' }}</button>
+    <button mat-flat-button (click)="goBack()" color="primary">{{ 'Отменить' }}</button>
+  </ng-container>
+
+</app-content-with-buttons-layout>

@@ -1,0 +1,40 @@
+@import "mixins";
+
+:host {
+  --hover-row-bg: var(--primary-100);
+  --focus-row-bg: var(--primary-50);
+
+  tr:not(.mat-mdc-header-row) {
+    &:hover {
+      background: var(--hover-row-bg) !important;
+    }
+    &:focus {
+      background: var(--focus-row-bg);
+    }
+
+    &[tabindex="-1"] {
+       pointer-events: none;
+       --hover-row-bg: transparent;
+       --focus-row-bg: transparent;
+    }
+  }
+
+  @include xs-screen-max {
+    --mat-table-row-item-label-text-line-height: 16px;
+    --mat-table-row-item-label-text-size: 12px;
+
+    --mat-table-header-headline-line-height: 16px;
+    --mat-table-header-headline-size: 12px;
+    --mat-table-header-headline-weight: 500;
+  }
+
+  @include lg-screen-min {
+    --mat-table-row-item-label-text-line-height: 22px;
+    --mat-table-row-item-label-text-size: 16px;
+    --mat-table-row-item-label-text-weight: 400;
+
+    --mat-table-header-headline-line-height: 24px;
+    --mat-table-header-headline-size: 16px;
+    --mat-table-header-headline-weight: 500;
+  }
+}

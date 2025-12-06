@@ -1,0 +1,21 @@
+<app-header [title]="title" (goBackClicked)="goBack()"></app-header>
+
+<app-content-with-buttons-layout>
+  <app-posts-table
+    main-content
+    [dataLoading]="dataLoading"
+    [dataSource]="dataSource"
+    [displayedColumns]="displayedColumns"
+    [displayFieldLabels]="displayFieldLabels"
+    [displayFieldLabelsShort]="displayFieldLabelsShort"
+    [initialPostId]="postsService.selectedPost?.id"
+  ></app-posts-table>
+
+  <ng-container buttons-content #buttonsContent>
+    <button *ngIf="!dataLoading" mat-flat-button (click)="editPost(true)" color="primary" data-prevent-unselect-row="true">{{ 'Добавить' }}</button>
+    <button *ngIf="!dataLoading" mat-flat-button (click)="editPost()" color="primary" [disabled]="!postsService.selectedPost" data-prevent-unselect-row="true">{{ 'Править' }}</button>
+    <button *ngIf="!dataLoading" mat-flat-button (click)="removePost()" color="primary" [disabled]="!postsService.selectedPost" data-prevent-unselect-row="true">{{ 'Удалить' }}</button>
+    <button *ngIf="!dataLoading" mat-flat-button (click)="goBack()" color="primary">{{ 'Назад' }}</button>
+  </ng-container>
+
+</app-content-with-buttons-layout>

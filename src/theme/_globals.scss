@@ -1,0 +1,38 @@
+@use "adaptive";
+
+// Breakpoints map
+$breakpoints: (
+  "xs": 0,
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px
+);
+
+:root {
+  --screen-size: 'unknown';
+
+  @each $name, $size in $breakpoints {
+    --screen-size-#{$name}: #{$size};
+  }
+
+  @include adaptive.xs-screen-min {
+    --screen-size: var(--screen-size-xs);
+  }
+
+  @include adaptive.sm-screen-min {
+    --screen-size: var(--screen-size-sm);
+  }
+
+  @include adaptive.md-screen-min {
+    --screen-size: var(--screen-size-md);
+  }
+
+  @include adaptive.lg-screen-min {
+    --screen-size: var(--screen-size-lg);
+  }
+
+  @include adaptive.xl-screen-min {
+    --screen-size: var(--screen-size-xl);
+  }
+}

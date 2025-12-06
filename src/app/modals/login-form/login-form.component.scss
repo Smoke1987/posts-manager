@@ -1,0 +1,17 @@
+:host {
+  --form-field-width: 200px;
+
+  .login {
+    &-form-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      & > mat-form-field {
+        max-width: 100%;
+        width: var(--form-field-width);
+      }
+    }
+  }
+}
