@@ -1,7 +1,8 @@
 @use "adaptive";
 
 :host {
-  --avatar-size: 28px;
+  --avatar-size: 32px;
+  --avatar-icon-size: 22px;
   --login-font-size: 22px;
   --header-default-height: 64px;
 
@@ -12,6 +13,9 @@
   --mat-toolbar-standard-height: var(--header-height);
 
   .header {
+    --mat-toolbar-container-background-color: #5F7354;
+    --mat-toolbar-container-text-color: #ffffff;
+
     &-title {
 
     }
@@ -44,11 +48,22 @@
           text-transform: capitalize;
         }
 
-        mat-icon {
+        .avatar {
           width: var(--avatar-size);
           height: var(--avatar-size);
-          font-size: var(--avatar-size);
           margin-left: 8px;
+          border-radius: 50%;
+          background: var(--primary-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          mat-icon {
+            width: var(--avatar-icon-size);
+            height: var(--avatar-icon-size);
+            font-size: var(--avatar-icon-size);
+            color: #ffffff;
+          }
         }
       }
     }

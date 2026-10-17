@@ -10,7 +10,9 @@
   <button mat-button *ngIf="(currentUser$ | async) as user" class="logout-button" (click)="logOut()">
     <div class="button-content">
       <span class="user-name">{{ user.login }}</span>
-      <mat-icon>person</mat-icon>
+      <span class="avatar">
+        <mat-icon>person</mat-icon>
+      </span>
     </div>
   </button>
 </mat-toolbar>
